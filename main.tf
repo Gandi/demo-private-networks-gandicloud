@@ -1,24 +1,3 @@
-terraform {
-  required_providers {
-    openstack = {
-      source  = "registry.terraform.io/terraform-provider-openstack/openstack"
-      version = ">= 1.28"
-    }
-    gandi = {
-      source  = "registry.terraform.io/go-gandi/gandi"
-      version = "1.1.1"
-    }
-    random = {
-      source = "registry.terraform.io/hashicorp/random"
-      version = "3.5.1"
-    }
-  }
-}
-
-provider "gandi" {
-  personal_access_token = var.gandi_personal_access_token
-}
-
 locals {
   private_subnet_cidr  = "10.0.1.0/24"
   db_server_private_ip = "10.0.1.101"
