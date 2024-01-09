@@ -1,6 +1,23 @@
-#######################
-# OpenStack Resources #
-#######################
+terraform {
+  required_providers {
+    openstack = {
+      source  = "registry.terraform.io/terraform-provider-openstack/openstack"
+      version = ">= 1.28"
+    }
+    gandi = {
+      source  = "registry.terraform.io/go-gandi/gandi"
+      version = "1.1.1"
+    }
+    random = {
+      source = "registry.terraform.io/hashicorp/random"
+      version = "3.5.1"
+    }
+  }
+}
+
+provider "gandi" {
+  personal_access_token = var.gandi_personal_access_token
+}
 
 locals {
   private_subnet_cidr  = "10.0.1.0/24"
@@ -17,11 +34,27 @@ locals {
   p if p.name == "public"][0].fixed_ip_v4
 }
 
-
 data "openstack_images_image_ids_v2" "images" {
   name = var.image_name
   sort = "updated_at"
 }
+
+###################
+# Gandi Resources #
+###################
+
+resource "gandi_livedns_record" "asciinema_server_dns_record_v4" {
+  count = (var.manage_dns_record_using_livedns ? 1 : 0)
+  name  = var.asciinema_server_subdomain
+  ttl   = 300
+  type  = "A"
+  values = ["${local.asciinema_server_public_ip}"]
+  zone = var.asciinema_server_domain_apex
+}
+
+#######################
+# OpenStack Resources #
+#######################
 
 resource "openstack_compute_keypair_v2" "admin_keypair" {
   name       = "asciinema_admin_pubkey"
@@ -50,6 +83,12 @@ resource "openstack_blockstorage_volume_v3" "db_boot" {
   size = 25
   # Takes the latest uploaded image by name
   image_id = data.openstack_images_image_ids_v2.images.ids[0]
+}
+
+resource "random_password" "db_password" {
+  length           = 20
+  special          = true
+  override_special = "*-_=+<>"
 }
 
 resource "openstack_compute_instance_v2" "db_server" {
