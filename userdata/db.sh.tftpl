@@ -1,0 +1,17 @@
+#!/bin/bash
+
+set -e
+
+apt update
+apt install -y postgresql-15
+
+su - postgres -c "psql -c \"CREATE USER asciinema PASSWORD '${db_password}'\""
+su - postgres -c 'createdb asciinema -O asciinema'
+
+# Listen on private IP
+sed -i "s/^#listen_addresses = .*/listen_addresses = '${my_private_ip}'/g" /etc/postgresql/15/main/postgresql.conf
+
+# Allow connection using the asciinema user from the asciinema server
+echo "host asciinema asciinema ${asciinema_server_ip}/32 password" >> /etc/postgresql/15/main/pg_hba.conf
+
+systemctl restart postgresql@15-main.service

@@ -1,0 +1,36 @@
+#!/bin/bash
+
+set -e
+
+apt update
+apt install -y git postgresql-client-15 podman podman-compose
+
+cd /root/
+git clone -b "v${asciinema_version}" --recursive https://github.com/asciinema/asciinema-server.git
+cd asciinema-server
+
+# Fix images to use
+sed -i 's/ghcr.io\/asciinema\/asciinema-server:latest/ghcr.io\/asciinema\/asciinema-server:${asciinema_version}/g' docker-compose.yml
+sed -i 's/image: nginx:1.15-alpine/image: docker.io\/library\/nginx:1.15-alpine/g' docker-compose.yml
+sed -i 's/image: namshi\/smtp/image: docker.io\/namshi\/smtp@sha256:aa63b8de68ce63dfcf848c56f3c1a16d81354f4accd4242a0086c57dd5a91d77/g' docker-compose.yml
+
+sed -i 's/env_file: .env.production/env_file: .env.demo/g' docker-compose.yml
+
+generated_secret=$(podman run --rm ghcr.io/asciinema/asciinema-server:${asciinema_version} gen_secret)
+encoded_db_password=$(python3 -c "import urllib.parse as ul; print(ul.quote_plus('${db_password}'))")
+
+cat > .env.demo<< EOF
+URL_SCHEME=http
+URL_HOST=${server_host}
+URL_PORT=80
+SECRET_KEY_BASE=$generated_secret
+DATABASE_URL=postgresql://asciinema:$encoded_db_password@${db_server_private_ip}/asciinema
+MAILNAME=${server_host}
+SIGN_UP_DISABLED=false
+EOF
+
+# Wait for db to be available
+pg_opts="--host=${db_server_private_ip}"
+while ! pg_isready $pg_opts; do sleep 1; done
+
+podman-compose up -d --pull --no-deps smtp nginx phoenix
