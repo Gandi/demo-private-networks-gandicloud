@@ -6,7 +6,7 @@ terraform {
     }
     gandi = {
       source  = "registry.terraform.io/go-gandi/gandi"
-      version = "1.1.1"
+      version = "2.3.0"
     }
     random = {
       source = "registry.terraform.io/hashicorp/random"
