@@ -11,6 +11,9 @@ locals {
   db_server_public_ip = [
     for p in openstack_compute_instance_v2.db_server.network :
   p if p.name == "public"][0].fixed_ip_v4
+
+  # Hackish way to check that user provides a PAT if wanting to use livedns
+  validate_pat = (var.manage_dns_record_using_livedns == true && var.gandi_personal_access_token == null) ? tobool("Please set the variable gandi_personal_access_token to use livedns.") : true
 }
 
 data "openstack_images_image_ids_v2" "images" {

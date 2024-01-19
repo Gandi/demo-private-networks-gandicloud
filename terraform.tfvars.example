@@ -1,5 +1,4 @@
 asciinema_server_domain_apex        = "example.local"
 asciinema_server_subdomain          = "asciinema"
 manage_dns_record_using_livedns     = true
-gandi_personal_access_token         = "change-to-your-pat"
 admin_ssh_pubkey                    = "my-pubkey"
