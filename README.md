@@ -1,6 +1,6 @@
 # Asciinema-server-opentofu
 
-Simple terraform resources to deploy an asciinema-server on GandiCloud VPS, using either [Terraform](https://www.terraform.io/) or [OpenTofu](https://opentofu.org/).
+Simple terraform resources to deploy an asciinema-server on GandiCloud VPS, using either [Terraform](https://www.terraform.io/) or [OpenTofu](https://opentofu.org/) and a GandiCloud VPS private network.
 
 ## Disclaimer
 
@@ -21,7 +21,6 @@ cp terraform.tfvars.example terraform.tfvars
 | asciinema_server_domain_apex     | "example.local"               | Bare domain name (without subdomain part) to deploy the asciinema server on                                                                       |
 | asciinema_server_subdomain       | "asciinema"                   | Subdomain of the domain to deploy on                                                                                                              |
 | manage_dns_record_using_livedns  | true                          | Wether to modify the DNS zone of the above domain using the [go-gandi terraform provider](https://registry.terraform.io/providers/go-gandi/gandi) |
-| gandi_personal_access_token      | "change-to-your-pat"      | (Only if manage_dns_record_using_livedns) Your Personal Access Token                                                            |
 | admin_ssh_pubkey                 | "change-to-your-ssh-pubkey"   | SSH public key to authorize on the servers deployed                                                                                               |
 
 You can check the other available variables that can be set in ./base.tf .
@@ -33,6 +32,12 @@ For the nix users, a [`flake.nix`](./flake.nix) provides a shell with opentofu a
 Otherwise, you need to install either [Terraform](https://www.terraform.io/) or [OpenTofu](https://opentofu.org/) (tested with `opentofu v1.6.0-dev`).
 
 You also need to source your OpenStack credentials, which can be done [following this documentation](https://docs.gandi.net/en/cloud/vps/api/index.html#prepare-your-environment-to-use-the-openstack-cli)
+
+Finally, you need to provide a Gandi Personal Access Token through the variable `gandi_personal_access_token` if `manage_dns_record_using_livedns` is true. It can be sourced using:
+
+```
+source ./personal_access_token.sh
+```
 
 Once you have your client ready, run:
 
