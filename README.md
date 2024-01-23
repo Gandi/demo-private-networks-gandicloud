@@ -23,7 +23,7 @@ cp terraform.tfvars.example terraform.tfvars
 | manage_dns_record_using_livedns  | true                          | Wether to modify the DNS zone of the above domain using the [go-gandi terraform provider](https://registry.terraform.io/providers/go-gandi/gandi) |
 | admin_ssh_pubkey                 | "change-to-your-ssh-pubkey"   | SSH public key to authorize on the servers deployed                                                                                               |
 
-You can check the other available variables that can be set in ./base.tf .
+You can check the other available variables that can be set in [variables.tf](./variables.tf).
 
 ### Init & run using tofu
 
@@ -83,6 +83,6 @@ Some other GandiCloud VPS features that you might be interested in:
 To get more information on the private network feature on GandiCloud VPS, you can check:
 
 - the [Gandi documentation](https://docs.gandi.net/en/cloud/vps/resource_management/private_networks.html)
-- the terraform resources definition in [./openstack_resources.tf](./openstack_resources.tf).
+- the terraform resources definition in [main.tf](./main.tf).
 
 In this deployment, one private IP is declared explicitely (for the database server, see `local.db_server_private_ip`) and one is chosen dynamically by OpenStack (which powers the GandiCloud VPS platform), for the asciinema server. In both cases, the server can get its IPs using DHCP as this service is provided by OpenStack.
