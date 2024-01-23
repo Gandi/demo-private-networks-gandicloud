@@ -2,6 +2,8 @@
 
 Simple terraform resources to deploy an asciinema-server on GandiCloud VPS, using either [Terraform](https://www.terraform.io/) or [OpenTofu](https://opentofu.org/) and a GandiCloud VPS private network.
 
+This repository is published as a resource to go along [this Gandi news article](https://news.gandi.net/fr/2024/01/applications-multi-serveurs-avec-reseaux-prives-gandicloud-vps/)
+
 ## Disclaimer
 
 Please read [the comments section](#comments) before deploying this, as this repository was made as a demo for the GandiCloud private network feature and not intended for production.

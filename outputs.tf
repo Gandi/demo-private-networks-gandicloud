@@ -6,6 +6,9 @@ output "output_message" {
   value = <<EOT
 Congrats!
 
+In a few seconds (cloud-init run in your servers), you can access your asciinema server and register at:
+http://${var.asciinema_server_subdomain}.${var.asciinema_server_domain_apex}
+
 To connect to the DB server: ssh ${var.username}@${local.db_server_public_ip}
 
 To connect to the asciinema server: ssh ${var.username}@${local.asciinema_server_public_ip}
